@@ -24,5 +24,10 @@ start_link() ->
 %% ===================================================================
 
 init([]) ->
-    {ok, { {one_for_one, 5, 10}, []} }.
+
+
+    RiakEndpoint =
+        {qlg_riak_srv, {qlg_riak_srv, start_link, []},
+         permament, 5000, worker, [qlg_riak_srv]},
+    {ok, { {one_for_one, 5, 10}, [RiakEndpoint]} }.
 

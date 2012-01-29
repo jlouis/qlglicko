@@ -5,7 +5,11 @@
   {registered, []},
   {applications, [
                   kernel,
-                  stdlib
+                  stdlib,
+                  jobs,
+                  inets,
+                  gproc,
+                  riakc
                  ]},
   {mod, { qlglicko_app, []}},
   {env, []}

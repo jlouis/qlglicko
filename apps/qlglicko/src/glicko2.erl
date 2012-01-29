@@ -1,17 +1,10 @@
--module(glicko).
+-module(glicko2).
 
 -ifdef(TEST).
 -include_lib("eunit/include/eunit.hrl").
 -endif.
 
--export([scale/2,
-         scale_opponents/2,
-         update_rating/1,
-         compute_delta/2,
-         compute_volatility/4,
-         phi_star/2,
-         new_rating/4,
-         unscale/2,
+-export([phi_star/2,
          rate/4]).
 
 -define(TAU, 0.5). % Good values are between 0.3 and 1.2

@@ -1,3 +1,11 @@
 *.beam
 .eunit
 ebin/*.app
+/deps/
+/2011.pdf
+/2011.png
+/dhw2011.csv
+/dhw2011.png
+/rating_output.csv
+/out.png
+/plot.Rout

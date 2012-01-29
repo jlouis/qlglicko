@@ -1,7 +1,6 @@
 -module(dhw2011).
 
--export([glicko/0, matches/0, players/0,
-         csv/2]).
+-export([matches/0]).
 
 matches() ->
 %%% Group stage
@@ -81,30 +80,3 @@ matches() ->
      {avek, killsen, 1}
     ].
 
-players() ->
-    S = matches(),
-    lists:usort(
-      lists:concat([[P1, P2] || {P1, P2, _} <- S])).
-
-glicko() ->
-    glicko_db:create_db(players()),
-    G = glicko_bg:initialize(players(), matches()),
-    {G, rate(G, players())}.
-
-rate(_G, []) -> [];
-rate(G, [P | Ps]) -> 
-    [rate_1(G, P) | rate(G, Ps)].
-
-rate_1(G, Player) ->
-    [{Player, R, RD, Sigma}] = glicko_db:lookup(Player),
-    Opponents = glicko_bg:matches(G, Player),
-    {Player, glicko:rate(R, RD, Sigma, Opponents)}.
-
-csv(Fname, Ratings) ->
-    IoData = ["Player,R,RD,Sigma", $\n,
-              [[mk_rating(R), $\n] || R <- Ratings]],
-    file:write_file(Fname, IoData).
-
-mk_rating({Player, {R, RD, Volatility}}) ->
-    [atom_to_list(Player), $,, float_to_list(R), $,,
-     float_to_list(RD), $,, float_to_list(Volatility)].

@@ -1,6 +1,8 @@
 -module(glicko_bg).
 
 -export([initialize/2,
+         delete/1,
+         average_matches/2,
          matches/2]).
 
 initialize(Players, Matches) ->
@@ -8,6 +10,16 @@ initialize(Players, Matches) ->
     [digraph:add_vertex(G, P) || P <- Players],
     add_matches(G, Matches).
 
+match_count(G, [P]) ->
+    length(digraph:in_edges(G, P)) + length(digraph:out_edges(G, P)).
+
+average_matches(G, Players) ->
+    Counts = [match_count(G, P) || P <- Players,
+                                   match_count(G, P) /= 0],
+    lists:sum(Counts) / length(Counts).
+
+delete(G) ->
+    true = digraph:delete(G).
 
 add_matches(G, []) -> G;
 add_matches(G, [{Winner, Loser, N} | Next]) ->
@@ -25,13 +37,13 @@ matches(Graph, Player) ->
                 [{W, R, RD, _}] = glicko_db:lookup(W),
                 {R, RD, N, 0}
             end || E <- digraph:in_edges(Graph, Player)],
-    explode(Won) ++ explode(Lost).
+    Matches = explode(Won) ++ explode(Lost),
+    Matches.
 
 explode(X) ->
     lists:concat(explode_1(X)).
 
-explode_1([]) ->
-    [];
+explode_1([]) -> [];
 explode_1([{R, RD, No, C} | Next]) ->
     [ [{R, RD, C} || _ <- lists:seq(1, No)] | explode_1(Next) ].
 
