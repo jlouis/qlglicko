@@ -9,3 +9,4 @@ ebin/*.app
 /rating_output.csv
 /out.png
 /plot.Rout
+/rel/qlglicko

@@ -14,6 +14,9 @@ console:
 graph:
 	R CMD BATCH plot.R
 
+release:
+	rebar generate
+
 postgres_start:
 	  pg_ctl -D /usr/local/var/postgres \
 		-l /usr/local/var/postgres/server.log start
