@@ -28,7 +28,8 @@ CREATE INDEX player_lastupdate ON player (lastupdate);
 CREATE VIEW players_to_update AS
   SELECT name
   FROM player
-  WHERE lastupdate + interval '5 days' < now();
+  WHERE lastupdate + interval '5 days' < now()
+  ORDER BY lastupdate ASC;
 
 CREATE TABLE tournament_result (
   id UUID NOT NULL REFERENCES tournament (id),
@@ -49,12 +50,14 @@ CREATE VIEW player_ratings AS
 
 CREATE TABLE raw_match (
   id       UUID PRIMARY KEY NOT NULL,
+  tstamp   TIMESTAMP NOT NULL DEFAULT(now()),
   content  TEXT
 );
 
 -- Partial index over raw matches
 CREATE INDEX raw_match_missing ON raw_match (content)
-  WHERE content IS NULL;
+  WHERE content IS NULL
+  ORDER BY tstamp ASC;
 
 -- Query using that partial index
 CREATE VIEW matches_to_fetch AS
@@ -64,7 +67,7 @@ CREATE VIEW matches_to_fetch AS
   
 CREATE TABLE duel_match (
   id       UUID PRIMARY KEY NOT NULL,
-  played   TIMESTAMP NULL NULL,
+  played   TIMESTAMP NOT NULL,
   winner   VARCHAR(32) NOT NULL REFERENCES player (name),
   winner_score INTEGER NOT NULL,
   loser    VARCHAR(32) NOT NULL REFERENCES player (name),
