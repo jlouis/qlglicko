@@ -9,3 +9,5 @@
   We stamp each match with a provisional timestamp of when they have been added to the DB.
   When all matches less than the above switch TIMESTAMP has been fetched, we are ready to rank.
 
+* Tournament code is not yet written.
+
