@@ -1,0 +1,11 @@
+* When storing raw matches, save when we pulled them.
+  We are only going to run a tournament if all matches are
+  solved. And all players are solved.
+
+  Players are solved when all players have been pulled after the end
+  tournament date. This gives a switch TIMESTAMP after which we know all
+  relevant matches are in queue.
+
+  We stamp each match with a provisional timestamp of when they have been added to the DB.
+  When all matches less than the above switch TIMESTAMP has been fetched, we are ready to rank.
+

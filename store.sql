@@ -9,6 +9,7 @@ CREATE TABLE tournament (
   id       UUID NOT NULL PRIMARY KEY,
   t_from     TIMESTAMP NOT NULL,
   t_to       TIMESTAMP NOT NULL,
+  switch     TIMESTAMP DEFAULT NULL,
   done     BOOLEAN NOT NULL DEFAULT false
 );
 
@@ -28,7 +29,10 @@ CREATE INDEX player_lastupdate ON player (lastupdate);
 CREATE VIEW players_to_update AS
   SELECT name
   FROM player
+  -- Fetch old matches, but not young matches.
+  -- We'd rather make a single efficient fetch
   WHERE lastupdate + interval '5 days' < now()
+    AND lastupdate + interval '3 days' > now()
   ORDER BY lastupdate ASC;
 
 CREATE TABLE tournament_result (
@@ -50,14 +54,14 @@ CREATE VIEW player_ratings AS
 
 CREATE TABLE raw_match (
   id       UUID PRIMARY KEY NOT NULL,
-  tstamp   TIMESTAMP NOT NULL DEFAULT(now()),
+  added   TIMESTAMP NOT NULL DEFAULT(now()),
   content  TEXT
 );
 
 -- Partial index over raw matches
 CREATE INDEX raw_match_missing ON raw_match (content)
   WHERE content IS NULL
-  ORDER BY tstamp ASC;
+  ORDER BY added ASC;
 
 -- Query using that partial index
 CREATE VIEW matches_to_fetch AS
