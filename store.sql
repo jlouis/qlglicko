@@ -59,15 +59,15 @@ CREATE TABLE raw_match (
 );
 
 -- Partial index over raw matches
-CREATE INDEX raw_match_missing ON raw_match (content)
+CREATE INDEX raw_match_missing ON raw_match (content, added)
   WHERE content IS NULL
-  ORDER BY added ASC;
 
 -- Query using that partial index
 CREATE VIEW matches_to_fetch AS
   SELECT id
   FROM raw_match
-  WHERE content IS NULL;
+  WHERE content IS NULL
+  ORDER BY added ASC;
   
 CREATE TABLE duel_match (
   id       UUID PRIMARY KEY NOT NULL,
