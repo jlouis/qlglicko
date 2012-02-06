@@ -10,3 +10,4 @@ ebin/*.app
 /out.png
 /plot.Rout
 /rel/qlglicko
+/.backend-api.plt
