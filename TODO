@@ -9,6 +9,7 @@
   We stamp each match with a provisional timestamp of when they have been added to the DB.
   When all matches less than the above switch TIMESTAMP has been fetched, we are ready to rank.
 
+* We should fix the damper problem in Jobs
 * Tournament code is not yet written.
 
 * Code could do with some testing.
