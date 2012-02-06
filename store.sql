@@ -3,10 +3,17 @@
 --System bucket:
 --  Last ranked tournament.
 
+DROP DATABASE qlglicko;
+CREATE DATABASE qlglicko;
+
+\c qlglicko;
+
 BEGIN;
 
+CREATE EXTENSION "uuid-ossp";
+
 CREATE TABLE tournament (
-  id       UUID NOT NULL PRIMARY KEY,
+  id       UUID NOT NULL PRIMARY KEY DEFAULT uuid_generate_v4(),
   t_from     TIMESTAMP NOT NULL,
   t_to       TIMESTAMP NOT NULL,
   switch     TIMESTAMP DEFAULT NULL,
@@ -20,50 +27,54 @@ CREATE VIEW last_tournament AS
     LIMIT 1;
           
 CREATE TABLE player (
-  name     VARCHAR(32) UNIQUE NOT NULL PRIMARY KEY,
+  id       UUID NOT NULL PRIMARY KEY DEFAULT uuid_generate_v4(),
+  name     VARCHAR(32) UNIQUE NOT NULL,
   lastupdate TIMESTAMP NOT NULL
 );
 
+CREATE INDEX player_name ON player (name);
 CREATE INDEX player_lastupdate ON player (lastupdate);
 
-CREATE VIEW players_to_update AS
-  SELECT name
+INSERT INTO player (name, lastupdate) VALUES ('strenx', now() - '5 days' :: interval);
+
+CREATE OR REPLACE VIEW players_to_update AS
+  SELECT id, name
   FROM player
   -- Fetch old matches, but not young matches.
   -- We'd rather make a single efficient fetch
-  WHERE lastupdate + interval '5 days' < now()
-    AND lastupdate + interval '3 days' > now()
-  ORDER BY lastupdate ASC;
+  WHERE lastupdate < (now() - '5 days' :: interval);
 
 CREATE TABLE tournament_result (
   id UUID NOT NULL REFERENCES tournament (id),
-  name       VARCHAR(32) NOT NULL REFERENCES player (name),
+  player_id UUID NOT NULL REFERENCES player (id),
   r          FLOAT NOT NULL,
   rd         FLOAT NOT NULL,
   sigma      FLOAT NOT NULL
 );
 
-CREATE INDEX tournament_result_name ON tournament_result (name);
+CREATE INDEX tournament_result_player_id ON tournament_result (player_id);
 CREATE INDEX tournament_result_id   ON tournament_result (id);
 
 CREATE VIEW player_ratings AS
-  SELECT name, r, rd, sigma
+  SELECT player.name, r, rd, sigma
   FROM tournament_result
          INNER JOIN
-       last_tournament ON (last_tournament.id = tournament_result.id);
+       last_tournament ON (last_tournament.id = tournament_result.id)
+         INNER JOIN
+       player ON (player.id = player_id);
 
 CREATE TABLE raw_match (
   id       UUID PRIMARY KEY NOT NULL,
   added   TIMESTAMP NOT NULL DEFAULT(now()),
-  content  TEXT
+  content  BYTEA
 );
 
 -- Partial index over raw matches
 CREATE INDEX raw_match_missing ON raw_match (content, added)
-  WHERE content IS NULL
+  WHERE content IS NULL;
 
 -- Query using that partial index
-CREATE VIEW matches_to_fetch AS
+CREATE VIEW matches_to_refresh AS
   SELECT id
   FROM raw_match
   WHERE content IS NULL
@@ -72,9 +83,9 @@ CREATE VIEW matches_to_fetch AS
 CREATE TABLE duel_match (
   id       UUID PRIMARY KEY NOT NULL,
   played   TIMESTAMP NOT NULL,
-  winner   VARCHAR(32) NOT NULL REFERENCES player (name),
+  winner   UUID NOT NULL REFERENCES player (id),
   winner_score INTEGER NOT NULL,
-  loser    VARCHAR(32) NOT NULL REFERENCES player (name),
+  loser    UUID NOT NULL REFERENCES player (id),
   loser_score INTEGER NOT NULL
 );
 
