@@ -15,3 +15,5 @@ ebin/*.app
 /apps/qlglicko/ebin/qlglicko.app
 /rankings.pdf
 /rankings.png
+/.RData
+/plot2.Rout
