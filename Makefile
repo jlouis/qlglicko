@@ -1,5 +1,5 @@
 .PHONY: all graph compile get-deps clean test_console console graph \
-	releaseclean postgres_start postgres_stop distclean plt analyze
+	relclean rel postgres_start postgres_stop distclean plt analyze
 
 all: compile
 
@@ -54,7 +54,4 @@ plt:
 analyze: compile
 	$(DIALYZER) --no_check_plt \
 		     apps/*/ebin \
-		--plt .qlglicko.plt \
-		-Werror_handling \
-		-Wunmatched_returns #-Wunderspecs
-
+		--plt .qlglicko.plt

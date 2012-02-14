@@ -81,6 +81,9 @@ CREATE TABLE raw_match (
   content  BYTEA
 );
 
+ALTER TABLE raw_match ADD COLUMN analyzed boolean NOT NULL default(false);
+
+
 SELECT count(*) FROM duel_match;
 
 -- Partial index over raw matches
@@ -94,6 +97,15 @@ CREATE VIEW matches_to_refresh AS
   WHERE content IS NULL
   ORDER BY added ASC;
 
+CREATE INDEX raw_match_to_analyze ON raw_match (analyzed)
+  WHERE analyzed = false AND content IS NOT NULL;
+
+CREATE OR REPLACE VIEW matches_to_analyze AS
+  SELECT id
+  FROM raw_match
+  WHERE analyzed = false AND content IS NOT NULL;
+
+  
   CREATE TABLE duel_match (
   id       UUID PRIMARY KEY NOT NULL,
   played   TIMESTAMP NOT NULL,
