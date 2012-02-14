@@ -18,15 +18,20 @@ test_console:
 	erl -pa apps/*/ebin deps/*/ebin
 
 console:
-	rel/qlglicko/bin/qlglicko console
+	rel/qlglicko/bin/qlglicko console \
+		-pa ../../apps/*/ebin \
+		-pa ../../deps/*/ebin
 
 graph:
 	R CMD BATCH plot.R
 
-releaseclean:
+graph2:
+	R CMD BATCH plot2.R
+
+relclean:
 	rm -fr rel/qlglicko
 
-release:
+rel:
 	rebar generate
 
 postgres_start:
@@ -39,7 +44,7 @@ postgres_stop:
 DIALYZER=dialyzer
 
 plt:
-	$(DIALYZER) --build_plt --output_plt .backend-api.plt \
+	$(DIALYZER) --build_plt --output_plt .qlglicko.plt \
 		-pa deps/*/ebin \
 		deps/*/ebin \
 		--apps kernel stdlib sasl inets crypto \
@@ -49,7 +54,7 @@ plt:
 analyze: compile
 	$(DIALYZER) --no_check_plt \
 		     apps/*/ebin \
-		--plt .backend-api.plt \
+		--plt .qlglicko.plt \
 		-Werror_handling \
 		-Wunmatched_returns #-Wunderspecs
 
