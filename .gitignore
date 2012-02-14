@@ -11,3 +11,7 @@ ebin/*.app
 /plot.Rout
 /rel/qlglicko
 /.backend-api.plt
+/.qlglicko.plt
+/apps/qlglicko/ebin/qlglicko.app
+/rankings.pdf
+/rankings.png

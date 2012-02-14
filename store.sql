@@ -37,6 +37,18 @@ CREATE INDEX player_lastupdate ON player (lastupdate);
 
 INSERT INTO player (name, lastupdate) VALUES ('strenx', now() - '5 days' :: interval);
 
+CREATE OR REPLACE VIEW oldest_player AS
+  SELECT lastupdate as tstamp
+  FROM player
+  ORDER BY lastupdate ASC
+  LIMIT 1;
+
+CREATE OR REPLACE VIEW tournament_all_players_refreshed AS
+  SELECT id
+  FROM tournament,oldest_player
+  WHERE t_to < tstamp AND done = false
+  ORDER BY t_to ASC;
+         
 CREATE OR REPLACE VIEW players_to_update AS
   SELECT id, name
   FROM player
@@ -55,8 +67,8 @@ CREATE TABLE tournament_result (
 CREATE INDEX tournament_result_player_id ON tournament_result (player_id);
 CREATE INDEX tournament_result_id   ON tournament_result (id);
 
-CREATE VIEW player_ratings AS
-  SELECT player.name, r, rd, sigma
+CREATE OR REPLACE VIEW player_ratings AS
+  SELECT player.id, player.name, r, rd, sigma
   FROM tournament_result
          INNER JOIN
        last_tournament ON (last_tournament.id = tournament_result.id)
@@ -69,8 +81,10 @@ CREATE TABLE raw_match (
   content  BYTEA
 );
 
+SELECT count(*) FROM duel_match;
+
 -- Partial index over raw matches
-CREATE INDEX raw_match_missing ON raw_match (content, added)
+CREATE INDEX raw_match_missing ON raw_match (added)
   WHERE content IS NULL;
 
 -- Query using that partial index
@@ -79,8 +93,8 @@ CREATE VIEW matches_to_refresh AS
   FROM raw_match
   WHERE content IS NULL
   ORDER BY added ASC;
-  
-CREATE TABLE duel_match (
+
+  CREATE TABLE duel_match (
   id       UUID PRIMARY KEY NOT NULL,
   played   TIMESTAMP NOT NULL,
   winner   UUID NOT NULL REFERENCES player (id),
@@ -91,12 +105,45 @@ CREATE TABLE duel_match (
 
 CREATE INDEX duel_match_played ON duel_match (played);
 
--- TODO: Given a tournament ID, Player, find the duels won
---  for that player and pull out the ratings of all the losers
--- Select from and to out of the tournament.
--- Use this to constrain the duel_matches to that tournament
--- Now, JOIN duels_won over it.
--- Now, JOIN the losing players by the tournament that came before.
+CREATE OR REPLACE VIEW duel_match_ratings AS
+  SELECT winner, COALESCE(w.r, 1500.0) as wr,
+                 COALESCE(w.rd, 350.0) as wrd,
+                 COALESCE(w.sigma, 0.06) as wsigma,
+         loser,  COALESCE(l.r, 1500.0) as lr,
+                 COALESCE(l.rd, 350.0) as lrd,
+                 COALESCE(l.sigma, 0.06) as lsigma
+  FROM duel_match
+         LEFT OUTER JOIN player_ratings w ON (w.id = winner)
+         LEFT OUTER JOIN player_ratings l ON (l.id = loser);
 
+CREATE VIEW oldest_match_not_done AS
+  SELECT added as tstamp
+  FROM raw_match
+  WHERE content IS NULL
+  ORDER BY added ASC
+  LIMIT 1;
+
+CREATE VIEW tournament_with_all_matches AS
+  SELECT t.id
+  FROM tournament t, oldest_match_not_done nd
+  WHERE nd.tstamp > t.t_to + '5 days' :: interval;
+
+CREATE VIEW tournaments_to_rank AS
+  SELECT t.id
+  FROM tournament t
+        INNER JOIN tournament_with_all_matches am USING (id)
+        INNER JOIN tournament_all_players_refreshed pr USING (id);
+
+CREATE OR REPLACE VIEW matches_played AS
+  SELECT id, COUNT(id) as count
+  FROM (  SELECT winner as id FROM duel_match
+        UNION ALL
+          SELECT loser  as id FROM duel_match) ss
+  GROUP BY ss.id;
+
+CREATE OR REPLACE VIEW avg_matches_played AS
+  SELECT avg(count)
+  FROM matches_played;
+  
 COMMIT;
  
