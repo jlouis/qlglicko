@@ -87,7 +87,7 @@ ALTER TABLE raw_match ADD COLUMN analyzed boolean NOT NULL default(false);
 SELECT count(*) FROM duel_match;
 
 -- Partial index over raw matches
-CREATE INDEX raw_match_missing ON raw_match (added)
+CREATE INDEX raw_match_missing ON raw_match (id)
   WHERE content IS NULL;
 
 -- Query using that partial index

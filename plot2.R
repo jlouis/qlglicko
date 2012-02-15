@@ -12,14 +12,15 @@ credplot.gg <- function(df){
     return(p)
 }
 
-x <- read.csv("rel/qlglicko/rankings.csv", header=TRUE, sep=",")
+x <- read.csv("rel/qlglicko/rankings.csv", header=TRUE, sep=",",
+              stringsAsFactors=FALSE)
 
 d <- data.frame(x = x$Player,
                 y = x$R,
                 rd = x$RD,
                 Volatility = x$Sigma)
 d <- transform(d, ylo = y-2*rd, yhi=y+2*rd)
-z <- data.frame(subset(d, y > 1800))
+z <- data.frame(subset(d, y > 1850))
 z$x <- factor(z$x)
 
 #library(plyr)
