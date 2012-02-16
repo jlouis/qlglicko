@@ -1,4 +1,4 @@
-credplot.gg <- function(df){
+credplot.gg.ladder <- function(df){
 # df is a data frame with 4 columns
 # df$x gives variable names
 # df$y gives center point
@@ -8,8 +8,28 @@ credplot.gg <- function(df){
     p <- ggplot(df, aes(x=reorder(x, ylo), y=y, colour=Volatility, ymin=ylo, ymax=yhi)) +
       geom_pointrange() + geom_point(aes(y=ylo), colour="black", size=1.5)+coord_flip() +
       geom_hline(aes(x=0), lty=2) + geom_hline(yintercept=1500, lty=3) +
-      xlab('Player') + ylab('Rating')
+        xlab('Player') + ylab('Rating')
     return(p)
+}
+
+credplot.gg.rank <- function(df){
+# df is a data frame with 4 columns
+# df$x gives variable names
+# df$y gives center point
+# df$ylo gives lower limits
+# df$yhi gives upper limits
+    require(ggplot2)
+    p <- ggplot(df, aes(x=reorder(x, y), y=y, colour=Volatility, ymin=ylo, ymax=yhi)) +
+      geom_pointrange() + geom_point(aes(y=ylo), colour="black", size=1.5)+coord_flip() +
+      geom_hline(aes(x=0), lty=2) + geom_hline(yintercept=1500, lty=3) +
+        xlab('Player') + ylab('Rating')
+    return(p)
+}
+
+binhex.gg <- function(df) {
+  require(ggplot2)
+  p <- ggplot(df, aes(x=y, y=Volatility)) + stat_binhex() + geom_hex()
+  return(p)
 }
 
 x <- read.csv("rel/qlglicko/rankings.csv", header=TRUE, sep=",",
@@ -20,16 +40,22 @@ d <- data.frame(x = x$Player,
                 rd = x$RD,
                 Volatility = x$Sigma)
 d <- transform(d, ylo = y-2*rd, yhi=y+2*rd)
-z <- data.frame(subset(d, y > 1850))
+z <- data.frame(subset(d, y > 1700))
 z$x <- factor(z$x)
 
 #library(plyr)
 #d <- arrange(d, desc(y), desc(rd))
 
-png("rankings.png", width=1600, height=1200)
-credplot.gg(z)
+#png("rankings.png", width=1600, height=1200)
+#credplot.gg(z)
+#dev.off()
+pdf("ladder.pdf", height=75)
+credplot.gg.ladder(z)
 dev.off()
-pdf("rankings.pdf", height=10)
-credplot.gg(z)
+pdf("rankings.pdf", height=75)
+credplot.gg.rank(z)
+dev.off()
+pdf("binhex.pdf")
+binhex.gg(d)
 dev.off()
 
