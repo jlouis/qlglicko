@@ -17,3 +17,5 @@ ebin/*.app
 /rankings.png
 /.RData
 /plot2.Rout
+/binhex.pdf
+/ladder.pdf
