@@ -20,6 +20,9 @@ CREATE TABLE tournament (
   done     BOOLEAN NOT NULL DEFAULT false
 );
 
+INSERT INTO tournament (t_from, t_to) VALUES ('2012-02-02', '2012-02-07');
+
+
 CREATE VIEW last_tournament AS
   SELECT id FROM tournament
     WHERE done = true
@@ -46,7 +49,7 @@ CREATE OR REPLACE VIEW oldest_player AS
 CREATE OR REPLACE VIEW tournament_all_players_refreshed AS
   SELECT id
   FROM tournament,oldest_player
-  WHERE t_to < tstamp AND done = false
+  WHERE (t_to + '5 days' :: interval) < tstamp AND done = false
   ORDER BY t_to ASC;
          
 CREATE OR REPLACE VIEW players_to_update AS
@@ -77,7 +80,7 @@ CREATE OR REPLACE VIEW player_ratings AS
 
 CREATE TABLE raw_match (
   id       UUID PRIMARY KEY NOT NULL,
-  added   TIMESTAMP NOT NULL DEFAULT(now()),
+  added    TIMESTAMP NOT NULL DEFAULT(now()),
   content  BYTEA
 );
 
@@ -156,6 +159,20 @@ CREATE OR REPLACE VIEW matches_played AS
 CREATE OR REPLACE VIEW avg_matches_played AS
   SELECT avg(count)
   FROM matches_played;
+
+CREATE OR REPLACE VIEW match_played AS
+ (SELECT played, winner as id FROM duel_match)
+    UNION ALL
+ (SELECT played, loser  as id FROM duel_match);
+
+CREATE OR REPLACE VIEW tournament_players AS
+  (SELECT DISTINCT t.id as tournament, mp.id as player
+   FROM match_played mp, tournament t
+   WHERE mp.played BETWEEN t.t_from AND t.t_to)
+
+CREATE OR REPLACE VIEW carry_over_players AS
+  (SELECT id FROM player_ratings);
   
+
 COMMIT;
  
