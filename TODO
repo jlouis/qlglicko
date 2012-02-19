@@ -9,8 +9,11 @@
   We stamp each match with a provisional timestamp of when they have been added to the DB.
   When all matches less than the above switch TIMESTAMP has been fetched, we are ready to rank.
 
-* Dialyzer warnings!
-* Consider using a specific HTTP profile
-* Tournament code is not yet written.
+* DONE Dialyzer warnings!
+* DONE Overload Protection
+* Introduce dispcount as a tool.
+* When ranking tournaments, do not make processes that dies.
+* DONE Part of the tournament code has been written
+* Tournament code misses pushbacks to the DB when ranking is done.
+* R script should probably pull rankings directly from PostgreSQL.
 
-* Code could do with some testing.
