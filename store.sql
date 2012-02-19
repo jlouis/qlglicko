@@ -49,7 +49,7 @@ CREATE OR REPLACE VIEW oldest_player AS
 CREATE OR REPLACE VIEW tournament_all_players_refreshed AS
   SELECT id
   FROM tournament,oldest_player
-  WHERE (t_to + '5 days' :: interval) < tstamp AND done = false
+  WHERE (t_to + '6 days' :: interval) < tstamp AND done = false
   ORDER BY t_to ASC;
          
 CREATE OR REPLACE VIEW players_to_update AS
@@ -90,7 +90,7 @@ ALTER TABLE raw_match ADD COLUMN analyzed boolean NOT NULL default(false);
 SELECT count(*) FROM duel_match;
 
 -- Partial index over raw matches
-CREATE INDEX raw_match_missing ON raw_match (id)
+CREATE INDEX raw_match_missing ON raw_match (added, id)
   WHERE content IS NULL;
 
 -- Query using that partial index
@@ -108,7 +108,6 @@ CREATE OR REPLACE VIEW matches_to_analyze AS
   FROM raw_match
   WHERE analyzed = false AND content IS NOT NULL;
 
-  
   CREATE TABLE duel_match (
   id       UUID PRIMARY KEY NOT NULL,
   played   TIMESTAMP NOT NULL,
@@ -121,7 +120,8 @@ CREATE OR REPLACE VIEW matches_to_analyze AS
 CREATE INDEX duel_match_played ON duel_match (played);
 
 CREATE OR REPLACE VIEW duel_match_ratings AS
-  SELECT winner, COALESCE(w.r, 1500.0) as wr,
+  SELECT played,
+         winner, COALESCE(w.r, 1500.0) as wr,
                  COALESCE(w.rd, 350.0) as wrd,
                  COALESCE(w.sigma, 0.06) as wsigma,
          loser,  COALESCE(l.r, 1500.0) as lr,
@@ -138,10 +138,10 @@ CREATE VIEW oldest_match_not_done AS
   ORDER BY added ASC
   LIMIT 1;
 
-CREATE VIEW tournament_with_all_matches AS
+CREATE OR REPLACE VIEW tournament_with_all_matches AS
   SELECT t.id
   FROM tournament t, oldest_match_not_done nd
-  WHERE nd.tstamp > t.t_to + '5 days' :: interval;
+  WHERE nd.tstamp > t.t_to + '6 days' :: interval;
 
 CREATE VIEW tournaments_to_rank AS
   SELECT t.id
@@ -155,6 +155,7 @@ CREATE OR REPLACE VIEW matches_played AS
         UNION ALL
           SELECT loser  as id FROM duel_match) ss
   GROUP BY ss.id;
+
 
 CREATE OR REPLACE VIEW avg_matches_played AS
   SELECT avg(count)
@@ -170,6 +171,11 @@ CREATE OR REPLACE VIEW tournament_players AS
    FROM match_played mp, tournament t
    WHERE mp.played BETWEEN t.t_from AND t.t_to)
 
+CREATE OR REPLACE VIEW tournament_matches AS
+  SELECT t.id as tournament, dm.*
+  FROM tournament t, duel_match dm
+  WHERE dm.played BETWEEN t.t_from AND t.t_to;
+  
 CREATE OR REPLACE VIEW carry_over_players AS
   (SELECT id FROM player_ratings);
   
