@@ -40,8 +40,11 @@ d <- data.frame(x = x$Player,
                 rd = x$RD,
                 Volatility = x$Sigma)
 d <- transform(d, ylo = y-2*rd, yhi=y+2*rd)
-z <- data.frame(subset(d, y > 1700))
+z <- data.frame(subset(d, ylo > 1500))
 z$x <- factor(z$x)
+
+y <- data.frame(subset(d, y > 1800))
+y$x <- factor(y$x)
 
 #library(plyr)
 #d <- arrange(d, desc(y), desc(rd))
@@ -53,9 +56,9 @@ pdf("ladder.pdf", height=75)
 credplot.gg.ladder(z)
 dev.off()
 pdf("rankings.pdf", height=75)
-credplot.gg.rank(z)
+credplot.gg.rank(y)
 dev.off()
-pdf("binhex.pdf")
+pdf("volatility.pdf")
 binhex.gg(d)
 dev.off()
 

@@ -1,10 +1,14 @@
 .PHONY: all graph compile get-deps clean test_console console graph \
-	relclean rel postgres_start postgres_stop distclean plt analyze
+	relclean rel postgres_start postgres_stop distclean plt analyze \
+	publish
 
 all: compile
 
 get-deps:
 	rebar get-deps
+
+publish:
+	cp rankings.pdf ladder.pdf volatility.pdf ~/Dropbox/Public
 
 distclean: clean releaseclean
 

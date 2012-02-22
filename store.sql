@@ -71,12 +71,10 @@ CREATE INDEX tournament_result_player_id ON tournament_result (player_id);
 CREATE INDEX tournament_result_id   ON tournament_result (id);
 
 CREATE OR REPLACE VIEW player_ratings AS
-  SELECT player.id, player.name, r, rd, sigma
+  SELECT player_id, r, rd, sigma
   FROM tournament_result
          INNER JOIN
-       last_tournament ON (last_tournament.id = tournament_result.id)
-         INNER JOIN
-       player ON (player.id = player_id);
+       last_tournament ON (last_tournament.id = tournament_result.id);
 
 CREATE TABLE raw_match (
   id       UUID PRIMARY KEY NOT NULL,
@@ -119,6 +117,9 @@ CREATE OR REPLACE VIEW matches_to_analyze AS
 
 CREATE INDEX duel_match_played ON duel_match (played);
 
+CREATE INDEX duel_match_winner ON duel_match (winner);
+CREATE INDEX duel_match_loser  ON duel_match (loser);
+
 CREATE OR REPLACE VIEW duel_match_ratings AS
   SELECT played,
          winner, COALESCE(w.r, 1500.0) as wr,
@@ -128,8 +129,8 @@ CREATE OR REPLACE VIEW duel_match_ratings AS
                  COALESCE(l.rd, 350.0) as lrd,
                  COALESCE(l.sigma, 0.06) as lsigma
   FROM duel_match
-         LEFT OUTER JOIN player_ratings w ON (w.id = winner)
-         LEFT OUTER JOIN player_ratings l ON (l.id = loser);
+         LEFT OUTER JOIN player_ratings w ON (w.player_id = winner)
+         LEFT OUTER JOIN player_ratings l ON (l.player_id = loser);
 
 CREATE VIEW oldest_match_not_done AS
   SELECT added as tstamp
@@ -177,7 +178,7 @@ CREATE OR REPLACE VIEW tournament_matches AS
   WHERE dm.played BETWEEN t.t_from AND t.t_to;
   
 CREATE OR REPLACE VIEW carry_over_players AS
-  (SELECT id FROM player_ratings);
+  (SELECT player_id FROM player_ratings);
   
 
 COMMIT;
