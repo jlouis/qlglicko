@@ -45,6 +45,11 @@ postgres_start:
 postgres_stop:
 	  pg_ctl -D /usr/local/var/postgres stop -s -m fast
 
+postgres_restore:
+	dropdb qlglicko
+	createdb qlglicko
+	pg_restore -C -d postgres ~/Dropbox/qlglicko.dump
+
 DIALYZER=dialyzer
 
 plt:
