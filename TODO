@@ -1,3 +1,14 @@
+* DONE Dialyzer warnings!
+* DONE Overload Protection
+
+* DONE Part of the tournament code has been written
+* DONE Introduce dispcount as a tool.
+* DONE When ranking tournaments, do not make processes that dies.
+* DONE Tournament code misses pushbacks to the DB when ranking is done.
+* Fix the query for tournament players
+  We should query for a player and always fetch his rating
+  It fails because the second UNION is the one providing the solution,
+  then we get the wrong result.
 * When storing raw matches, save when we pulled them.
   We are only going to run a tournament if all matches are
   solved. And all players are solved.
@@ -8,12 +19,4 @@
 
   We stamp each match with a provisional timestamp of when they have been added to the DB.
   When all matches less than the above switch TIMESTAMP has been fetched, we are ready to rank.
-
-* DONE Dialyzer warnings!
-* DONE Overload Protection
-* Introduce dispcount as a tool.
-* When ranking tournaments, do not make processes that dies.
-* DONE Part of the tournament code has been written
-* Tournament code misses pushbacks to the DB when ranking is done.
-* R script should probably pull rankings directly from PostgreSQL.
 
