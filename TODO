@@ -5,10 +5,14 @@
 * DONE Introduce dispcount as a tool.
 * DONE When ranking tournaments, do not make processes that dies.
 * DONE Tournament code misses pushbacks to the DB when ranking is done.
-* Fix the query for tournament players
+* DONE Fix the query for tournament players
   We should query for a player and always fetch his rating
   It fails because the second UNION is the one providing the solution,
   then we get the wrong result.
+* Enable HiPE for faster ranking
+* Get in more matches
+* Play with a higher tau
+  
 * When storing raw matches, save when we pulled them.
   We are only going to run a tournament if all matches are
   solved. And all players are solved.
