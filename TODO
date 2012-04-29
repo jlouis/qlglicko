@@ -1,6 +1,5 @@
 * DONE Dialyzer warnings!
 * DONE Overload Protection
-
 * DONE Part of the tournament code has been written
 * DONE Introduce dispcount as a tool.
 * DONE When ranking tournaments, do not make processes that dies.
@@ -9,10 +8,15 @@
   We should query for a player and always fetch his rating
   It fails because the second UNION is the one providing the solution,
   then we get the wrong result.
+* TODO Make ranking single-threaded
+  A single-threaded ranker is easier and what we need for this.
+* Make ranking setup-based
+  Rather than run the ranking from a database query all the time, we
+  can as well pre-setup the most common queries so we can run them
+  again and again in the system. This will allow us to run parallel
+  annealed ranking faster by looking up data in the system directory.
 * Enable HiPE for faster ranking
-* Get in more matches
-* Play with a higher tau
-  
+* DONE Get in more matches
 * When storing raw matches, save when we pulled them.
   We are only going to run a tournament if all matches are
   solved. And all players are solved.
