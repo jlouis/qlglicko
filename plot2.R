@@ -28,7 +28,7 @@ credplot.gg.rank <- function(df){
 
 binhex.gg <- function(df) {
   require(ggplot2)
-  p <- ggplot(df, aes(x=y, y=Volatility)) + stat_binhex(binhex=30) + geom_hex()
+  p <- ggplot(df, aes(x=y, y=Volatility)) + geom_point()
   return(p)
 }
 
@@ -40,10 +40,10 @@ d <- data.frame(x = x$Player,
                 rd = x$RD,
                 Volatility = x$Sigma)
 d <- transform(d, ylo = y-2*rd, yhi=y+2*rd)
-z <- data.frame(subset(d, ylo > 1575 & rd < 105))
+z <- data.frame(subset(d, ylo > 1675 & rd < 105))
 z$x <- factor(z$x)
 
-y <- data.frame(subset(d, y > 1800))
+y <- data.frame(subset(d, y > 1900 & y < 3000))
 y$x <- factor(y$x)
 
 #library(plyr)
