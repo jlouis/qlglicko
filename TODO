@@ -50,13 +50,29 @@ lastupdate | 2012-04-17 07:01:03.784328
   The prediction code is rather simple really. For each match, look up
   the player rankings. Assume the best player wins. Count wins. Count
   total matches. Prediction rate follows.
-* TODO Find a way to control that the rankings are insane
+* DONE Find a way to control that the rankings are insane
   We probably need a way to limit the initial ranking based upon the
   number of games the player plays. Just setting it at 350 seems to be
   way a too high initial RD if this can happen. We need to look to the
   web for suggestions on how to limit this down.
-* TODO Allow the ranker to run with different configuration parameters
+
+  Here is a suggestion: Initial RD,
+
+  IRD = 325 / sqrt(MatchesPlayed) + 25.
+
+  The 325 and 25 are tunable parameters. We can also tune by selecting
+  either this or selecting the "old" constant RD value for all that
+  starts.
+* DONE Allow the ranker to run with different configuration parameters
   This generalization is needed in order to make simulated annealing
-  runs
+  runs.
+** DONE Make it possible to inject a configuration into glicko2.
+** DONE Make it possible to inject a qlglicko configuration into the ranker.
+* TODO Obtain the newest data from our Database
 * TODO Link prediction code into the simulated annealer.
+* TODO Link configuration change code into the simulated annealer.
 * TODO Obtain good values
+** TODO Make the annealer able to output whenever it has run X runs with a .
+   This will make it way easier to fix stuff.
+** TODO Make the annealer work around errors by skipping the configuration
+
