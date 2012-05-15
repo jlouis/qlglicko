@@ -20,3 +20,8 @@ ebin/*.app
 /binhex.pdf
 /ladder.pdf
 /volatility.pdf
+/rankings_dhs_2012.pdf
+/rankings_dhs_2012.png
+/dhs.Rout
+/current_counterexample.eqc
+/Rplots.pdf
