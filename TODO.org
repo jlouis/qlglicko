@@ -90,4 +90,5 @@ lastupdate | 2012-04-17 07:01:03.784328
   We have 0-K. K-2 to K is the player find part.
                K-5 to K-3 is the subset where we predict.
                0 to K-6 is from where we learn.
+* TODO Consider close matches as draws
 * TODO Optimize!
