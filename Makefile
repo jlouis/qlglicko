@@ -32,6 +32,9 @@ graph:
 graph2:
 	R CMD BATCH plot2.R
 
+dhs:
+	R CMD BATCH dhs.R
+
 relclean:
 	rm -fr rel/qlglicko
 
