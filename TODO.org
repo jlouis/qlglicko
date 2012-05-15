@@ -68,11 +68,26 @@ lastupdate | 2012-04-17 07:01:03.784328
   runs.
 ** DONE Make it possible to inject a configuration into glicko2.
 ** DONE Make it possible to inject a qlglicko configuration into the ranker.
-* TODO Obtain the newest data from our Database
-* TODO Link prediction code into the simulated annealer.
-* TODO Link configuration change code into the simulated annealer.
-* TODO Obtain good values
-** TODO Make the annealer able to output whenever it has run X runs with a .
+* DONE Obtain the newest data from our Database
+* DONE Link prediction code into the simulated annealer.
+* DONE Link configuration change code into the simulated annealer.
+* DONE Ready annealer
+** DONE Make the annealer able to output whenever it has run X runs with a .
    This will make it way easier to fix stuff.
-** TODO Make the annealer work around errors by skipping the configuration
+** DONE Make the annealer work around errors by skipping the configuration
+* DONE Increase to the full amount of games
+* DONE use the real optimizing energy function
+  We now use a binomial deviation with an expectation calculation from
+  Glicko.
 
+* TODO Dig into infinite loops in the ranking code.
+  To do this, we'll write some tracing helpers so we can trace what is
+  going on in the running system.
+* TODO When ranking for prediction, we only want the subset
+  So: We have 1-13. We learn from 1-10. We then find players in 11-13.
+  On this subset of players, we predict for 8-10. Or in general:
+
+  We have 0-K. K-2 to K is the player find part.
+               K-5 to K-3 is the subset where we predict.
+               0 to K-6 is from where we learn.
+* TODO Optimize!
