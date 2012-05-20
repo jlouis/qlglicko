@@ -33,6 +33,9 @@ graph2:
 	R CMD BATCH plot2.R
 
 dhs:
+	echo 'Player,R,RD,Sigma' > rel/qlglicko/dhs2012.csv
+	grep -if dhs2012.match rel/qlglicko/rankings.csv >> rel/qlglicko/dhs2012.csv
+	echo 'a1r_ra1d,1500,397,0.07' >> rel/qlglicko/dhs2012.csv
 	R CMD BATCH dhs.R
 
 relclean:
