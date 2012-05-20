@@ -53,7 +53,7 @@ CREATE OR REPLACE VIEW tournament_all_players_refreshed AS
   ORDER BY t_to ASC;
          
 CREATE OR REPLACE VIEW players_to_update AS
-  SELECT id, name
+  SELECT id, name, date_part('day', now() - lastupdate) as age_days
   FROM player
   -- Fetch old matches, but not young matches.
   -- We'd rather make a single efficient fetch
