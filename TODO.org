@@ -80,9 +80,27 @@ lastupdate | 2012-04-17 07:01:03.784328
   We now use a binomial deviation with an expectation calculation from
   Glicko.
 
-* TODO Dig into infinite loops in the ranking code.
+* DONE Dig into infinite loops in the ranking code.
   To do this, we'll write some tracing helpers so we can trace what is
   going on in the running system.
+* DONE Run a full prediction run
+  Optimal values:
+  RD: 397
+  Volatility: 0.07
+  Tau: 0.3
+* TODO Make the fetcher able to fetch old matches
+** DONE Step 1: the view players_to_update needs to change.
+   This view needs a change which enables the usage of lastupdate,
+   computed for days it is behind.
+** DONE Step 2: The match fetcher should take into account how many days.
+   Now, the match fetcher should take into account how many days it is
+   behind.
+** DONE Step 3: Format the catch-up necessary.
+   We are currently not formatting anything about how much we should
+   catch up. We ought to fix this so we know how much we are catching
+   up.
+** TODO Step 4: Deploy this change and resume ranking.
+   First though, make a backup.
 * TODO When ranking for prediction, we only want the subset
   So: We have 1-13. We learn from 1-10. We then find players in 11-13.
   On this subset of players, we predict for 8-10. Or in general:
@@ -91,4 +109,6 @@ lastupdate | 2012-04-17 07:01:03.784328
                K-5 to K-3 is the subset where we predict.
                0 to K-6 is from where we learn.
 * TODO Consider close matches as draws
+* TODO What is the optimal length of tournaments? 7 days or 5 days?
+  We should be measuring average matches per player
 * TODO Optimize!
