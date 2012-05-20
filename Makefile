@@ -8,7 +8,7 @@ get-deps:
 	rebar get-deps
 
 publish:
-	cp rankings.pdf ladder.pdf volatility.pdf ~/Dropbox/Public
+	cp rankings_dhs_2012.pdf rankings.pdf ladder.pdf volatility.pdf ~/Dropbox/Public
 
 distclean: clean releaseclean
 
