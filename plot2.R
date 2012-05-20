@@ -28,7 +28,7 @@ credplot.gg.rank <- function(df){
 
 binhex.gg <- function(df) {
   require(ggplot2)
-  p <- ggplot(df, aes(x=y, y=Volatility)) + geom_point()
+  p <- ggplot(df, aes(x=y, y=Volatility)) + geom_hex()
   return(p)
 }
 
