@@ -55,7 +55,7 @@ postgres_stop:
 postgres_restore:
 	dropdb qlglicko
 	createdb qlglicko
-	pg_restore -C -d postgres ~/Dropbox/qlglicko.dump
+	pg_restore -C -d postgres ~/qlglicko.dump
 
 DIALYZER=dialyzer
 
