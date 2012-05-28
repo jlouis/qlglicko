@@ -88,7 +88,7 @@ lastupdate | 2012-04-17 07:01:03.784328
   RD: 397
   Volatility: 0.07
   Tau: 0.3
-* TODO Make the fetcher able to fetch old matches
+* DONE Make the fetcher able to fetch old matches
 ** DONE Step 1: the view players_to_update needs to change.
    This view needs a change which enables the usage of lastupdate,
    computed for days it is behind.
@@ -99,8 +99,23 @@ lastupdate | 2012-04-17 07:01:03.784328
    We are currently not formatting anything about how much we should
    catch up. We ought to fix this so we know how much we are catching
    up.
-** TODO Step 4: Deploy this change and resume ranking.
+** DONE Step 4: Deploy this change and resume ranking.
    First though, make a backup.
+* TODO Analyze why player _Katya has an extreme ranking
+  This is very odd indeed, so look at what kind of matches he has been
+  playing and why this happens. For some reason, we might have some
+  wrongly matched games on this player.
+
+  Large number of matches with a very short duration
+** TODO Add a short-duration filter to match ranking.
+* TODO Make it possible to detect banned players
+  We can't currently detect banned players. We should be able to do
+  that.
+* TODO Do not let banned players rating count
+* TODO Handle Players who are removed from the database
+  This task will restructure the database in some ways since a player
+  will now exist based on a time-frame. This can only be fixed by
+  keeping track of "alive" and "dead" players over time.
 * TODO When ranking for prediction, we only want the subset
   So: We have 1-13. We learn from 1-10. We then find players in 11-13.
   On this subset of players, we predict for 8-10. Or in general:
