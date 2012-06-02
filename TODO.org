@@ -108,6 +108,9 @@ lastupdate | 2012-04-17 07:01:03.784328
 
   Large number of matches with a very short duration
 ** TODO Add a short-duration filter to match ranking.
+   We need to read "GAME_LENGTH" and then interpret the string as an
+   integer. If it is less than 60, we should probably rule the game
+   out.
 * TODO Make it possible to detect banned players
   We can't currently detect banned players. We should be able to do
   that.
