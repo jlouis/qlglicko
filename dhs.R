@@ -60,7 +60,27 @@ y$x <- factor(y$x)
 pdf("rankings_dhs_2012.pdf", width=15)
 credplot.gg.rank(d)
 dev.off()
-pdf("volatility.pdf")
+pdf("volatility_dhs_2012.pdf")
 binhex.gg(d)
+dev.off()
+
+pdf("heatmap_dhs_2012.pdf")
+hmdat <- read.csv("rel/qlglicko/dhs2012_pmatrix.csv")
+library(ggplot2)
+library(reshape2)
+library(plyr)
+library(scales)
+hmdat.m <- melt(hmdat)
+hmdat.m <- ddply(hmdat.m, .(variable), transform,
+                 rescale = value)
+base_size <- 9
+(p <- ggplot(hmdat.m, aes(variable, Name))
+ + geom_tile(aes(fill = rescale), colour = "white")
+ + scale_fill_gradient(low = "white", high = "steelblue")
+ + theme_grey(base_size = base_size) + labs(x = "", y = "")
+ + scale_x_discrete(expand = c(0, 0))
+ + scale_y_discrete(expand = c(0, 0))
+ + opts(axis.ticks = theme_blank(), axis.text.x = theme_text(size = base_size *
+                                      0.8, angle = 330, hjust = 0, colour = "grey50")))
 dev.off()
 

@@ -198,7 +198,7 @@ export PKG_VERSION REPO DISTNAME
 ##### ----------------------------------------------------------------------
 
 publish:
-	cp rankings_dhs_2012.pdf rankings.pdf ladder.pdf volatility.pdf ~/Dropbox/Public
+	cp rankings_dhs_2012.pdf rankings.pdf ladder.pdf volatility.pdf heatmap_dhs_2012.pdf ~/Dropbox/Public
 
 graph:
 	R CMD BATCH plot.R
@@ -207,12 +207,10 @@ graph2:
 	R CMD BATCH plot2.R
 
 dhs:
-	echo 'Player,R,RD,Sigma' > rel/qlglicko/dhs2012.csv
-	grep -if dhs2012.match rel/qlglicko/rankings.csv >> rel/qlglicko/dhs2012.csv
-	echo 'a1r_ra1d,1500,397,0.07' >> rel/qlglicko/dhs2012.csv
-	echo 'hipnotic,1500,397,0.07' >> rel/qlglicko/dhs2012.csv
-	echo 'unnamedtony,9001,50,0.075' >> rel/qlglicko/dhs2012.csv
 	R CMD BATCH dhs.R
+
+thearena3:
+	R CMD BATCH thearena3.R
 
 postgres_start:
 	  pg_ctl -D /usr/local/var/postgres \
