@@ -78,9 +78,17 @@ check_plt: compile
 
 build_plt: compile
 	dialyzer --build_plt --output_plt $(COMBO_PLT) --apps $(APPS) \
-		deps/*/ebin
+		deps/edown/ebin \
+		deps/epgsql/ebin \
+                deps/gen_leader/ebin \
+                deps/gproc/ebin \
+                deps/jobs/ebin \
+                deps/jsx/ebin \
+                deps/lager/ebin \
+		deps/qlglicko_core/ebin \
+                deps/sfmt/ebin
 
-dialyzer: compile
+dialyzer:
 	@echo
 	@echo Use "'make check_plt'" to check PLT prior to using this target.
 	@echo Use "'make build_plt'" to build PLT prior to using this target.
