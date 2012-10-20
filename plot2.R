@@ -40,7 +40,7 @@ d <- data.frame(x = x$Player,
                 rd = x$RD,
                 Volatility = x$Sigma)
 d <- transform(d, ylo = y-2*rd, yhi=y+2*rd, lr=y-4*rd)
-z <- data.frame(subset(d, ylo > 1675 & rd < 90))
+z <- data.frame(subset(d, ylo > 1775 & rd < 90))
 z$x <- factor(z$x)
 
 y <- data.frame(subset(d, y > 1900 & y < 3000))
