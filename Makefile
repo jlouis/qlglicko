@@ -1,6 +1,6 @@
 REPO ?= qlglicko
 
-.PHONY: rel stagedevrel deps
+.PHONY: rel stagedevrel deps adroits dhs
 
 all: deps compile
 
@@ -206,7 +206,7 @@ export PKG_VERSION REPO DISTNAME
 ##### ----------------------------------------------------------------------
 
 publish:
-	cp rankings_dhs_2012.pdf rankings.pdf ladder.pdf volatility.pdf heatmap_dhs_2012.pdf ~/Dropbox/Public
+	cp rankings_adroits_2012.pdf rankings.pdf ladder.pdf volatility.pdf ~/Dropbox/Public
 
 graph:
 	R CMD BATCH plot.R
@@ -216,6 +216,12 @@ graph2:
 
 dhs:
 	R CMD BATCH dhs.R
+
+adroits:
+	echo "Player,R,RD,Sigma" > adroits.csv
+	grep -f adroits.match rel/qlglicko/rankings.csv >> adroits.csv
+	wc -l adroits.csv
+	R CMD BATCH adroits.R
 
 thearena3:
 	R CMD BATCH thearena3.R
@@ -229,8 +235,7 @@ postgres_stop:
 
 postgres_restore:
 	dropdb qlglicko
-	createdb qlglicko
-	pg_restore -C -d postgres ~/qlglicko.dump
+	pg_restore -e -C -d postgres ~/qlglicko.dump
 
 console:
 	rel/qlglicko/bin/qlglicko console \
