@@ -40,6 +40,14 @@ CREATE INDEX player_lastupdate ON player (lastupdate);
 
 INSERT INTO player (name, lastupdate) VALUES ('strenx', now() - '5 days' :: interval);
 
+CREATE TABLE hall_of_fame (
+  id	UUID NOT NULL PRIMARY KEY,
+  name	VARCHAR(32) NOT NULL,
+  entry	TIMESTAMP NOT NULL DEFAULT now()
+);
+
+CREATE INDEX hall_of_fame_name ON hall_of_fame (name);
+
 CREATE OR REPLACE VIEW oldest_player AS
   SELECT lastupdate as tstamp
   FROM player
