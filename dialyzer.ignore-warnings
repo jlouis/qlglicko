@@ -88,4 +88,3 @@ riak_search_pb.erl:151: The pattern <Binary, 'string'> can never match the type 
 riak_search_pb.erl:171: The pattern <Types, [{Fnum, Bytes} | Tail], Acc> can never match the type <_,[],[{_,_}]>
 sfmt_pure.erl:458: The pattern [H | T] can never match the type []
 sfmt_pure.erl:463: The pattern [H | T] can never match the type []
-sv_table_ets.erl:37: The call ets:delete_object(QName::atom() | tid(),Obj::[{_,_},...]) will never return since it differs in the 2nd argument from the success typing arguments: (atom() | tid(),tuple())
