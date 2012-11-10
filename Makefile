@@ -80,13 +80,15 @@ build_plt: compile
 	dialyzer --build_plt --output_plt $(COMBO_PLT) --apps $(APPS) \
 		deps/edown/ebin \
 		deps/epgsql/ebin \
-                deps/gen_leader/ebin \
-                deps/gproc/ebin \
-                deps/jobs/ebin \
-                deps/jsx/ebin \
-                deps/lager/ebin \
+		deps/gen_leader/ebin \
+		deps/glicko2/ebin \
+		deps/gproc/ebin \
+		deps/jobs/ebin \
+		deps/jsx/ebin \
+		deps/lager/ebin \
 		deps/qlglicko_core/ebin \
-                deps/sfmt/ebin
+		deps/safetyvalve/ebin \
+		deps/sfmt/ebin
 
 dialyzer:
 	@echo
