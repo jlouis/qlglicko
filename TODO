@@ -1,13 +1,15 @@
 List of things for the next release:
 
-· Deploying to blue.
+· Deploying to blue:
 · Update the supervisor tree with the new supervisor structure.
 · Get the database updated so it contains map information about players as well.
 · Properly handle players who are unknown.
-	Add a new update list for these kinds of things to the player map
-	When checking a player, also check this update-list. If too old, then check
+	DONE Add a new update list for these kinds of things to the player map
+	DONE When checking a player, also check this update-list. If too old, then check
 	  the player. Approximately do this once a month.
-	Unknown players are moved to the hall-of-fame list.
+	DONE Unknown players are moved to the hall-of-fame list.
+	
+· Deploying to green:
 · Properly handle banned players
 	If the player turns out to be banned, the Id of that player is not valid.
 	We mark that player by moving him to to banned-list.
