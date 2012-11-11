@@ -32,7 +32,8 @@ CREATE VIEW last_tournament AS
 CREATE TABLE player (
   id       UUID NOT NULL PRIMARY KEY DEFAULT uuid_generate_v4(),
   name     VARCHAR(32) UNIQUE NOT NULL,
-  lastupdate TIMESTAMP NOT NULL
+  lastupdate TIMESTAMP NOT NULL,
+  last_alive_check TIMESTAMP NOT NULL
 );
 
 CREATE INDEX player_name ON player (name);
