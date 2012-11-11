@@ -235,6 +235,9 @@ postgres_start:
 postgres_stop:
 	  pg_ctl -D /usr/local/var/postgres stop -s -m fast
 
+postgres_dump:
+        pg_dump -Fc qlglicko > qlglicko.dump
+
 postgres_restore:
 	dropdb qlglicko
 	pg_restore -e -C -d postgres ~/qlglicko.dump
