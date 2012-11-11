@@ -114,9 +114,10 @@ CREATE OR REPLACE VIEW matches_to_analyze AS
   FROM raw_match
   WHERE analyzed = false AND content IS NOT NULL;
 
-  CREATE TABLE duel_match (
+CREATE TABLE duel_match (
   id       UUID PRIMARY KEY NOT NULL,
   played   TIMESTAMP NOT NULL,
+  map	VARCHAR(20) NOT NULL,
   winner   UUID NOT NULL REFERENCES player (id),
   winner_score INTEGER NOT NULL,
   loser    UUID NOT NULL REFERENCES player (id),
