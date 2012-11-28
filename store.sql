@@ -12,6 +12,15 @@ BEGIN;
 
 CREATE EXTENSION "uuid-ossp";
 
+CREATE TABLE player_rankings (
+  player VARCHAR(32) NOT NULL,
+  map    VARCHAR(32) NOT NULL,
+  rank    FLOAT NOT NULL,
+  rd        FLOAT NOT NULL,
+  sigma FLOAT NOT NULL
+);
+
+
 CREATE TABLE tournament (
   id       UUID NOT NULL PRIMARY KEY DEFAULT uuid_generate_v4(),
   t_from     TIMESTAMP NOT NULL,

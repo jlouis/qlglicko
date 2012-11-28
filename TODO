@@ -1,15 +1,15 @@
 List of things for the next release:
 
-· Deploying to blue:
-· Update the supervisor tree with the new supervisor structure.
-· Get the database updated so it contains map information about players as well.
-· Properly handle players who are unknown.
-	DONE Add a new update list for these kinds of things to the player map
-	DONE When checking a player, also check this update-list. If too old, then check
-	  the player. Approximately do this once a month.
-	DONE Unknown players are moved to the hall-of-fame list.
-	
+· Production on blue.
+
 · Deploying to green:
+· DONE: Get Snapphanen in as the last player in the matchup.
+· Update the qlglicko.dump database, readying up for the next round of tunings.
+· Update the annealer to make it faster
+  · Speed up calculation of duel rounds.
+  · Anneal again, this time with per-player rankings.
+· Update the matrix ranker for the top players.
+
 · Properly handle banned players
 	If the player turns out to be banned, the Id of that player is not valid.
 	We mark that player by moving him to to banned-list.
