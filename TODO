@@ -4,6 +4,8 @@ List of things for the next release:
 
 · Deploying to green:
 · DONE: Get Snapphanen in as the last player in the matchup.
+· Add ability to serve static files to cowboy_web.
+
 · Update the qlglicko.dump database, readying up for the next round of tunings.
 · Update the annealer to make it faster
   · Speed up calculation of duel rounds.
