@@ -199,6 +199,12 @@ CREATE OR REPLACE VIEW tournament_matches AS
 CREATE OR REPLACE VIEW carry_over_players AS
   (SELECT player_id FROM player_ratings);
   
-
+CREATE OR REPLACE VIEW player_match_streak AS
+      SELECT player.name, duel_match.map, 1 as res, duel_match.played
+      FROM player INNER JOIN duel_match ON (player.id = duel_match.winner)
+  UNION
+      SELECT player.name, duel_match.map, -1 as res, duel_match.played
+      FROM player INNER JOIN duel_match ON (player.id = duel_match.loser);
+ 
 COMMIT;
  
