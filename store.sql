@@ -11,6 +11,7 @@ CREATE DATABASE qlglicko;
 BEGIN;
 
 CREATE EXTENSION "uuid-ossp";
+CREATE EXTENSION "pg_trgm";
 
 CREATE TABLE player_rankings (
   player VARCHAR(32) NOT NULL,
@@ -20,6 +21,7 @@ CREATE TABLE player_rankings (
   sigma FLOAT NOT NULL
 );
 
+CREATE INDEX player_trgm ON player_rankings USING gin (player gin_trgm_ops);
 
 CREATE TABLE tournament (
   id       UUID NOT NULL PRIMARY KEY DEFAULT uuid_generate_v4(),
@@ -47,6 +49,7 @@ CREATE TABLE player (
 
 CREATE INDEX player_name ON player (name);
 CREATE INDEX player_lastupdate ON player (lastupdate);
+CREATE INDEX player_trgm ON player USING gin (name gin_trgm_ops);
 
 INSERT INTO player (name, lastupdate) VALUES ('strenx', now() - '5 days' :: interval);
 
