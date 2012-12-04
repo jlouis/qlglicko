@@ -1,18 +1,8 @@
 List of things for the next release:
 
-· Production on green.
+· Production on blue.
 
 · Deploying to green:
-· DONE: Get Snapphanen in as the last player in the matchup.
-· DONE Add ability to serve static files to cowboy_web.
-· SORT BY on the maps so they always are in the same order.
-  This is actually Javascript :/
-· DONE Add code which can display tri-state diagrams
-· Better ILIKE searches through tri-grams.
-· Alter the code to have all ranking runs back in time
-· Add code to show the ranking development
-
-· Deploying to blue:
 · Update the qlglicko.dump database, readying up for the next round of tunings.
 · Update the annealer to make it faster
   · Speed up calculation of duel rounds.
