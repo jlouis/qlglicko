@@ -25,3 +25,4 @@ ebin/*.app
 /dhs.Rout
 /current_counterexample.eqc
 /Rplots.pdf
+/qlglicko.dump
