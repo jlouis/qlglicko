@@ -1,10 +1,15 @@
 List of things for the next release:
 
+Current best config:
 {config,413.6647638198139,0.08,0.345101465830836} Energy: 0.2225166827094691
 
-· Production on blue.
+· Production on green.
 
-· Deploying to green:
+Deploying to blue:
+· Correctly update safetyvalve to the newest version.
+
+SWITCH Deploy
+
 · Update the qlglicko.dump database, readying up for the next round of tunings.
 · fprof the ranking code
 	To figure out why things take so much time to run, do an fprof run on rounds 1..10
