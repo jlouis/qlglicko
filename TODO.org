@@ -1,132 +1,67 @@
-* DONE Dialyzer warnings!
-* DONE Overload Protection
-* DONE Part of the tournament code has been written
-* DONE Introduce dispcount as a tool.
-* DONE When ranking tournaments, do not make processes that dies.
-* DONE Tournament code misses pushbacks to the DB when ranking is done.
-* DONE Fix the query for tournament players
-  We should query for a player and always fetch his rating
-  It fails because the second UNION is the one providing the solution,
-  then we get the wrong result.
-* DONE Make ranking single-threaded
-  A single-threaded ranker is easier and what we need for this.
-* DONE Make ranking setup-based
-  Rather than run the ranking from a database query all the time, we
-  can as well pre-setup the most common queries so we can run them
-  again and again in the system. This will allow us to run parallel
-  annealed ranking faster by looking up data in the system directory.
-* DONE Figure out why the ranker produces outright INSANE results
-  I've seen users with rankings so high it can't be right at all. We
-  need to figure out why that is the case. I suggest we build a system
-  which can output ranking runs so we can take a look if it looks
-  right or not.
-** DONE Enable CSV output of players
-*** DONE Make the ranking loader able to load players as well.
-    We should be able to load player names
-*** DONE When outputting rankings, use the real player names
-** DONE Investigate the player rankings via R.
-   I have a hunch something is kinda wrong and we need to find it.
+* Current best known configuration
+{config,413.6647638198139,0.08,0.345101465830836} Energy: 0.2225166827094691
+* Production: Blue
+* DONE Deploy: Blue
+** DONE Go to erlang.mk for building the software
+** DONE Go to relx for building releases
+* Deploy: Green
+** DONE Split database into schemas
+*** DONE CREATE SCHEMA
+   There has to be 3 schemas containing raw data:
 
-   There isn't anything wrong. The problem is that Bashma4ek plays
-   Lp_Na1l as a new player. Lp_Na1l is new, so he has this insanely
-   high initial RD. Hence he gets 2400 Rating points. Now, since
-   Bashma4ek plays him like 50 times, his initial rating will be
-   insanely high. That is the problem.
-*** DONE There is a player with an insane rating. why?
-    The player is named Bashma4ek
+   S1: Core - The raw data we obtain from QuakeLive
 
--[ RECORD 1 ]------------------------------------
-id         | c99c88a1-047b-42e0-b545-338e30cfe5c7
-name       | Bashma4ek
-lastupdate | 2012-04-17 11:55:59.101616
-*** DONE There is a player with an insane volatility, why?
-    The player is named Lp_Na1L
--[ RECORD 1 ]------------------------------------
-id         | b7acf5cd-fed9-4934-8d91-3b7658f8c8a2
-name       | Lp_Na1L
-lastupdate | 2012-04-17 07:01:03.784328
+   Then there are a couple of access schemas:
 
-* DONE Write prediction code.
-  The prediction code is rather simple really. For each match, look up
-  the player rankings. Assume the best player wins. Count wins. Count
-  total matches. Prediction rate follows.
-* DONE Find a way to control that the rankings are insane
-  We probably need a way to limit the initial ranking based upon the
-  number of games the player plays. Just setting it at 350 seems to be
-  way a too high initial RD if this can happen. We need to look to the
-  web for suggestions on how to limit this down.
+   S4: web - Access for the web front
+   S5: processing - Access for the backend system
+*** DONE Let the qlglicko system use the Schema views
+** DONE Convert qlglicko_core to erlang.mk
+*** Remember updating the modules section
 
-  Here is a suggestion: Initial RD,
-
-  IRD = 325 / sqrt(MatchesPlayed) + 25.
-
-  The 325 and 25 are tunable parameters. We can also tune by selecting
-  either this or selecting the "old" constant RD value for all that
-  starts.
-* DONE Allow the ranker to run with different configuration parameters
-  This generalization is needed in order to make simulated annealing
-  runs.
-** DONE Make it possible to inject a configuration into glicko2.
-** DONE Make it possible to inject a qlglicko configuration into the ranker.
-* DONE Obtain the newest data from our Database
-* DONE Link prediction code into the simulated annealer.
-* DONE Link configuration change code into the simulated annealer.
-* DONE Ready annealer
-** DONE Make the annealer able to output whenever it has run X runs with a .
-   This will make it way easier to fix stuff.
-** DONE Make the annealer work around errors by skipping the configuration
-* DONE Increase to the full amount of games
-* DONE use the real optimizing energy function
-  We now use a binomial deviation with an expectation calculation from
-  Glicko.
-
-* DONE Dig into infinite loops in the ranking code.
-  To do this, we'll write some tracing helpers so we can trace what is
-  going on in the running system.
-* DONE Run a full prediction run
-  Optimal values:
-  RD: 397
-  Volatility: 0.07
-  Tau: 0.3
-* DONE Make the fetcher able to fetch old matches
-** DONE Step 1: the view players_to_update needs to change.
-   This view needs a change which enables the usage of lastupdate,
-   computed for days it is behind.
-** DONE Step 2: The match fetcher should take into account how many days.
-   Now, the match fetcher should take into account how many days it is
-   behind.
-** DONE Step 3: Format the catch-up necessary.
-   We are currently not formatting anything about how much we should
-   catch up. We ought to fix this so we know how much we are catching
-   up.
-** DONE Step 4: Deploy this change and resume ranking.
-   First though, make a backup.
-* TODO Analyze why player _Katya has an extreme ranking
-  This is very odd indeed, so look at what kind of matches he has been
-  playing and why this happens. For some reason, we might have some
-  wrongly matched games on this player.
-
-  Large number of matches with a very short duration
-** TODO Add a short-duration filter to match ranking.
-   We need to read "GAME_LENGTH" and then interpret the string as an
-   integer. If it is less than 60, we should probably rule the game
-   out.
-* TODO Make it possible to detect banned players
+** DONE Add connection pools to qlglicko
+** TODO Move all calls off pgsql_srv
+** TODO Change to binds and portals
+** TODO alter database access to match these schemas
+** DONE Fix core.player_rankings index
+* Deploy: Blue
+** Set up varnish in front of the web server
+** Correctly update safetyvalve to the newest version
+* Make it possible to detect banned players
   We can't currently detect banned players. We should be able to do
   that.
-* TODO Do not let banned players rating count
-* TODO Handle Players who are removed from the database
+* Do not let banned players rating count
+* Handle Players who are removed from the database
   This task will restructure the database in some ways since a player
   will now exist based on a time-frame. This can only be fixed by
   keeping track of "alive" and "dead" players over time.
-* TODO When ranking for prediction, we only want the subset
+* When ranking for prediction, we only want the subset
   So: We have 1-13. We learn from 1-10. We then find players in 11-13.
   On this subset of players, we predict for 8-10. Or in general:
 
   We have 0-K. K-2 to K is the player find part.
                K-5 to K-3 is the subset where we predict.
                0 to K-6 is from where we learn.
-* TODO Consider close matches as draws
-* TODO What is the optimal length of tournaments? 7 days or 5 days?
+* Consider close matches as draws
+* What is the optimal length of tournaments? 7 days or 5 days?
   We should be measuring average matches per player
-* TODO Optimize!
+* Optimize!
+* Update the qlglicko.dump database, readying up for the next round of tunings.
+* fprof the ranking code
+  To figure out why things take so much time to run, do an fprof run on rounds 1..10
+  so we know what is taking all the time in there. This will hint us toward what kind of
+  optimization we should go for and what is currently happening in the code w.r.t
+  time usage.
+* Update the annealer to make it faster
+  · Speed up calculation of duel rounds.
+  · Anneal again, this time with per-player rankings.
+* Properly handle banned players
+	If the player turns out to be banned, the Id of that player is not valid.
+	We mark that player by moving him to to banned-list.
+	
+	Add another field to the duel_match called "valid" and then proceed by
+	making this false for every game played by a banned player.
+	
+	Alternatively, do not pick matches where the player is in the banned list.
+	
+	Banned players are otherwise treated like unknown players.

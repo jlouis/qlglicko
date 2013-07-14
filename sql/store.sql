@@ -1,7 +1,73 @@
 -- Plan for what we need to store:
 
---System bucket:
---  Last ranked tournament.
+BEGIN;
+
+CREATE OR REPLACE FUNCTION processing.declare_match(match_id uuid) RETURNS integer AS $$
+DECLARE
+  knows uuid := NULL;
+BEGIN
+  SELECT INTO knows id FROM raw_match WHERE id = match_id;
+  IF NOT FOUND THEN
+    INSERT INTO raw_match (id, content) VALUES (match_id, NULL);
+    RETURN 1;
+  ELSE
+    RETURN 0;
+  END IF;
+END $$ LANGUAGE plpgsql;
+
+CREATE OR REPLACE FUNCTION processing.store_match(match_id uuid, match_data bytea) RETURNS integer AS $$
+DECLARE
+  knows integer := NULL;
+BEGIN
+  SELECT INTO knows id FROM raw_match WHERE id = match_id;
+  IF NOT FOUND THEN
+    RAISE EXCEPTION 'match_id % not found', match_id;
+  END IF;
+
+  IF knows IS NULL THEN
+    INSERT INTO raw_match (id, content) VALUES (match_id, match_data);
+    RETURN 1;
+  ELSE
+    RETURN 0;
+  END IF;
+END
+$$ LANGUAGE plpgsql;
+
+COMMIT;
+
+BEGIN;
+
+ALTER TABLE raw_match SET SCHEMA core;
+GRANT SELECT ON core.raw_match TO qlglicko_processing;
+
+
+
+COMMIT;
+
+\c qlglicko;
+
+BEGIN;
+
+-- User credentials
+CREATE USER qlglicko_web WITH PASSWORD 'Diwikeefum';
+CREATE USER qlglicko_processing WITH PASSWORD '0okTivlur7';
+
+-- Schemas for physical data containers
+CREATE SCHEMA core;
+CREATE SCHEMA player;
+CREATE SCHEMA duel;
+
+-- Schemas for data access
+CREATE SCHEMA web;
+  GRANT SELECT ON ALL TABLES IN SCHEMA web TO qlglicko_web;
+CREATE SCHEMA processing;
+  GRANT SELECT, INSERT, UPDATE ON ALL TABLES IN SCHEMA processing TO qlglicko_processing;
+  GRANT USAGE ON ALL SEQUENCES IN SCHEMA processing TO qlglicko_processing;
+  GRANT EXECUTE ON ALL FUNCTIONS IN SCHEMA processing TO qlglicko_processing;
+
+COMMIT;
+
+
 
 DROP DATABASE qlglicko;
 CREATE DATABASE qlglicko;
@@ -35,12 +101,6 @@ CREATE TABLE tournament (
 INSERT INTO tournament (t_from, t_to) VALUES ('2012-02-02', '2012-02-07');
 
 
-CREATE VIEW last_tournament AS
-  SELECT id FROM tournament
-    WHERE done = true
-    ORDER BY t_to DESC
-    LIMIT 1;
-          
 CREATE TABLE player (
   id       UUID NOT NULL PRIMARY KEY DEFAULT uuid_generate_v4(),
   name     VARCHAR(32) UNIQUE NOT NULL,
@@ -62,18 +122,6 @@ CREATE TABLE hall_of_fame (
 
 CREATE INDEX hall_of_fame_name ON hall_of_fame (name);
 
-CREATE OR REPLACE VIEW oldest_player AS
-  SELECT lastupdate as tstamp
-  FROM player
-  ORDER BY lastupdate ASC
-  LIMIT 1;
-
-CREATE OR REPLACE VIEW tournament_all_players_refreshed AS
-  SELECT id
-  FROM tournament,oldest_player
-  WHERE (t_to + '6 days' :: interval) < tstamp AND done = false
-  ORDER BY t_to ASC;
-         
 CREATE OR REPLACE VIEW players_to_update AS
   SELECT id, name, date_part('day', now() - lastupdate) as age_days
   FROM player
@@ -162,18 +210,7 @@ CREATE VIEW oldest_match_not_done AS
   ORDER BY added ASC
   LIMIT 1;
 
-CREATE OR REPLACE VIEW tournament_with_all_matches AS
-  SELECT t.id
-  FROM tournament t, oldest_match_not_done nd
-  WHERE nd.tstamp > t.t_to + '6 days' :: interval;
-
-CREATE VIEW tournaments_to_rank AS
-  SELECT t.id
-  FROM tournament t
-        INNER JOIN tournament_with_all_matches am USING (id)
-        INNER JOIN tournament_all_players_refreshed pr USING (id);
-
-CREATE OR REPLACE VIEW matches_played AS
+CREATE OR REPLACE VIEW duel.matches_played AS
   SELECT id, COUNT(id) as count
   FROM (  SELECT winner as id FROM duel_match
         UNION ALL
@@ -181,7 +218,7 @@ CREATE OR REPLACE VIEW matches_played AS
   GROUP BY ss.id;
 
 
-CREATE OR REPLACE VIEW avg_matches_played AS
+CREATE OR REPLACE VIEW web.avg_matches_played AS
   SELECT avg(count)
   FROM matches_played;
 
@@ -190,18 +227,10 @@ CREATE OR REPLACE VIEW match_played AS
     UNION ALL
  (SELECT played, loser  as id FROM duel_match);
 
-CREATE OR REPLACE VIEW tournament_players AS
-  (SELECT DISTINCT t.id as tournament, mp.id as player
-   FROM match_played mp, tournament t
-   WHERE mp.played BETWEEN t.t_from AND t.t_to)
-
 CREATE OR REPLACE VIEW tournament_matches AS
   SELECT t.id as tournament, dm.*
   FROM tournament t, duel_match dm
   WHERE dm.played BETWEEN t.t_from AND t.t_to;
-  
-CREATE OR REPLACE VIEW carry_over_players AS
-  (SELECT player_id FROM player_ratings);
   
 CREATE OR REPLACE VIEW player_match_streak AS
       SELECT player.name, duel_match.map, 1 as res, duel_match.played
