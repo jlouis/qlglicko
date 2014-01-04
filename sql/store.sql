@@ -1,5 +1,16 @@
 -- Plan for what we need to store:
 
+ROLLBACK;
+BEGIN;
+
+ALTER VIEW matches_to_analyze SET SCHEMA processing;
+GRANT SELECT ON processing.matches_to_analyze TO qlglicko_processing;
+ALTER VIEW players_to_update RENAME TO players_to_refresh;
+ALTER VIEW players_to_refresh SET SCHEMA processing;
+GRANT SELECT ON processing.players_to_refresh TO qlglicko_processing;
+
+COMMIT;
+
 BEGIN;
 
 CREATE OR REPLACE FUNCTION processing.declare_match(match_id uuid) RETURNS integer AS $$
@@ -13,25 +24,25 @@ BEGIN
   ELSE
     RETURN 0;
   END IF;
-END $$ LANGUAGE plpgsql;
+END $$ LANGUAGE plpgsql SECURITY DEFINER;
 
 CREATE OR REPLACE FUNCTION processing.store_match(match_id uuid, match_data bytea) RETURNS integer AS $$
 DECLARE
-  knows integer := NULL;
+  knows bytea := NULL;
 BEGIN
-  SELECT INTO knows id FROM raw_match WHERE id = match_id;
+  SELECT INTO knows content FROM raw_match WHERE id = match_id;
   IF NOT FOUND THEN
     RAISE EXCEPTION 'match_id % not found', match_id;
   END IF;
 
   IF knows IS NULL THEN
-    INSERT INTO raw_match (id, content) VALUES (match_id, match_data);
+    UPDATE raw_match SET content = match_data WHERE id = match_id;
     RETURN 1;
   ELSE
     RETURN 0;
   END IF;
 END
-$$ LANGUAGE plpgsql;
+$$ LANGUAGE plpgsql SECURITY DEFINER;
 
 COMMIT;
 
