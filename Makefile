@@ -13,8 +13,8 @@ clean-release:
 	rm -rf rel/$(PROJECT)
 
 DEPS = qlglicko_core qlglicko_web
-dep_qlglicko_core = file:///home/jlouis/Dropbox/Bare-Repos/qlglicko_core.git master
-dep_qlglicko_web  = file:///home/jlouis/Dropbox/Bare-Repos/qlglicko_web.git master
+dep_qlglicko_core = git@github.com:jlouis/qlglicko_core.git master
+dep_qlglicko_web  = git@github.com:jlouis/qlglicko_web.git master
 
 include erlang.mk
 
