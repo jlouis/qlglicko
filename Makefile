@@ -121,6 +121,6 @@ postgres_restore:
 	pg_restore -e -C -d postgres ./qlglicko.dump
 
 console:
-	rel/qlglicko/bin/qlglicko console \
+	_rel/qlglicko/bin/qlglicko console \
 		-pa ../../deps/*/ebin
 
