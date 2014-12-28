@@ -1,0 +1,10 @@
+BEGIN;
+
+GRANT SELECT ON public.player TO qlglicko_web;
+
+GRANT INSERT ON public.duel_match TO qlglicko_processing;
+GRANT SELECT, UPDATE ON public.raw_match TO qlglicko_processing;
+GRANT SELECT ON public.player TO qlglicko_processing;
+GRANT UPDATE ON public.player TO qlglicko_processing;
+
+COMMIT;

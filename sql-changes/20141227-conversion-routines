@@ -1,0 +1,32 @@
+BEGIN;
+
+CREATE OR REPLACE FUNCTION
+  processing.store_match_json(in_id uuid,
+                              in_added timestamp,
+                              in_content jsonb,
+                              in_analyzed boolean)
+RETURNS integer AS $$
+
+BEGIN
+  INSERT INTO core.raw_match(id, added, content, analyzed) VALUES (in_id, in_added, in_content, in_analyzed);
+  
+  RETURN 1;
+END
+$$ LANGUAGE plpgsql SECURITY DEFINER;
+
+GRANT SELECT ON core.raw_match TO qlglicko_processing;
+GRANT EXECUTE ON FUNCTION processing.store_match_json(uuid, timestamp, jsonb, boolean) TO qlglicko_processing;
+
+CREATE OR REPLACE FUNCTION
+  processing.mark_raw_match_moved(in_id uuid)
+RETURNS integer AS $$
+BEGIN
+  UPDATE public.raw_match SET moved = true WHERE id = in_id;
+  
+  RETURN 1;
+END
+$$ LANGUAGE plpgsql SECURITY DEFINER;
+
+GRANT EXECUTE ON FUNCTION processing.mark_raw_match_moved(uuid) TO qlglicko_processing;
+
+COMMIT;
