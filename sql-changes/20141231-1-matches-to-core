@@ -1,0 +1,44 @@
+BEGIN;
+
+CREATE OR REPLACE FUNCTION processing.declare_match(match_id uuid)
+ RETURNS integer
+ LANGUAGE plpgsql
+ SECURITY DEFINER
+AS $function$
+DECLARE
+  knows uuid := NULL;
+BEGIN
+  SELECT INTO knows id FROM core.raw_match WHERE id = match_id;
+  IF NOT FOUND THEN
+    INSERT INTO core.raw_match (id, content) VALUES (match_id, NULL);
+    RETURN 1;
+  ELSE
+    RETURN 0;
+  END IF;
+END $function$
+
+DROP FUNCTION processing.store_match(uuid, bytea);
+CREATE OR REPLACE FUNCTION processing.store_match(match_id uuid, match_data jsonb)
+ RETURNS integer
+ LANGUAGE plpgsql
+ SECURITY DEFINER
+AS $function$
+DECLARE
+  knows jsonb := NULL;
+BEGIN
+  SELECT INTO knows content FROM core.raw_match WHERE id = match_id;
+  IF NOT FOUND THEN
+    RAISE EXCEPTION 'match_id % not found', match_id;
+  END IF;
+
+  IF knows IS NULL THEN
+    UPDATE core.raw_match SET content = match_data WHERE id = match_id;
+    RETURN 1;
+  ELSE
+    RETURN 0;
+  END IF;
+END
+$function$
+
+
+COMMIT;

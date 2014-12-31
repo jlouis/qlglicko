@@ -26,3 +26,4 @@ ebin/*.app
 /current_counterexample.eqc
 /Rplots.pdf
 /qlglicko.dump
+_rel

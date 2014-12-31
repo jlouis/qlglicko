@@ -1,0 +1,14 @@
+BEGIN;
+
+CREATE TABLE core.raw_match (
+	id	uuid NOT NULL PRIMARY KEY,
+	added timestamp NOT NULL DEFAULT NOW(),
+	content jsonb,
+	analyzed boolean NOT NULL DEFAULT FALSE
+);
+
+CREATE INDEX raw_match_added ON core.raw_match(added);
+CREATE INDEX raw_match_missing ON core.raw_match(added, id) WHERE content IS NULL;
+CREATE INDEX raw_match_to_analyze ON core.raw_match(id) WHERE analyzed = false AND content IS NOT NULL;
+
+COMMIT;
