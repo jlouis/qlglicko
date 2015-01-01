@@ -1,0 +1,35 @@
+BEGIN;
+
+DROP FUNCTION processing.store_match_json(uuid, timestamp, jsonb, boolean);
+DROP FUNCTION processing.mark_raw_match_moved(uuid);
+
+CREATE OR REPLACE FUNCTION processing.analyze_unavailable()
+    RETURNS integer
+    LANGUAGE plpgsql
+    SECURITY DEFINER
+AS $function$
+DECLARE
+  updated integer := 0;
+BEGIN
+  UPDATE core.raw_match SET analyzed = true WHERE content ? 'UNAVAILBLE' AND analyzed = false AND content IS NOT NULL;
+  GET DIAGNOSTICS updated := ROW_COUNT;
+  RETURN updated;
+END $function$;
+
+CREATE OR REPLACE FUNCTION processing.analyze_unranked()
+    RETURNS integer
+    LANGUAGE plpgsql
+    SECURITY DEFINER
+AS $function$
+DECLARE
+    updated integer := 0;
+BEGIN
+  UPDATE core.raw_match SET analyzed = true WHERE
+    analyzed = false AND
+    content IS NOT NULL AND
+    ((content ->> 'GAME_TYPE') <> 'duel' OR (content ->> 'RANKED')::int = 0);
+  GET DIAGNOSTICS updated := ROW_COUNT;
+  RETURN updated;
+END $function$;
+
+COMMIT;

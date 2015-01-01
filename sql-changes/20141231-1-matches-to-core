@@ -15,7 +15,7 @@ BEGIN
   ELSE
     RETURN 0;
   END IF;
-END $function$
+END $function$;
 
 DROP FUNCTION processing.store_match(uuid, bytea);
 CREATE OR REPLACE FUNCTION processing.store_match(match_id uuid, match_data jsonb)
@@ -38,7 +38,12 @@ BEGIN
     RETURN 0;
   END IF;
 END
-$function$
+$function$;
 
+CREATE OR REPLACE VIEW processing.matches_to_fetch AS
+  SELECT rm.id
+  FROM core.raw_match rm
+  WHERE rm.content IS NULL
+  ORDER BY rm.added;
 
 COMMIT;
