@@ -5,7 +5,7 @@ update_core () {
 }
 
 update_web () {
-	cd deps_qlglicko_web && git pull && cd ../..
+	cd deps/qlglicko_web && git pull && cd ../..
 }
 
 compile () {
@@ -19,4 +19,5 @@ push () {
 update_core
 update_web
 compile
+relx
 push
