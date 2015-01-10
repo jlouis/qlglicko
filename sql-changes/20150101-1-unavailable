@@ -32,4 +32,13 @@ BEGIN
   RETURN updated;
 END $function$;
 
+CREATE OR REPLACE VIEW processing.matches_to_analyze AS
+  SELECT rm.id
+  FROM core.raw_match rm
+  WHERE rm.analyzed = false AND rm.content IS NOT NULL;
+
+GRANT SELECT ON processing.matches_to_analyze TO qlglicko_processing;
+GRANT SELECT ON SCHEMA core TO qlglicko_processing;
+GRANT UPDATE ON core.raw_match TO qlglicko_processing;
+
 COMMIT;

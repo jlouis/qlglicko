@@ -1,0 +1,16 @@
+BEGIN;
+
+CREATE VIEW web.duel_match AS
+    SELECT
+        id,
+        played,
+        winner,
+        winner_score,
+        loser,
+        loser_score,
+        map
+    FROM public.duel_match;
+    
+GRANT SELECT ON web.duel_match TO qlglicko_web;
+
+COMMIT;

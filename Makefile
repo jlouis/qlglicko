@@ -1,18 +1,27 @@
-.DEFAULT_GOAL = compile 
+PROJECT = qlglicko
+.DEFAULT_GOAL = deps
 
-.PHONY: compile
-compile:
-	rebar compile
+.PHONY: release clean-release push
 
-.PHONY: release
+push:
+	rsync -ar rel/qlglicko myrddraal:P/qlglicko/rel
+
 release: clean-release deps
-	relx
+	relx -o rel/$(PROJECT)
 
-.PHONY: clean-release
 clean-release:
 	rm -rf rel/$(PROJECT)
 
+DEPS = qlglicko_core qlglicko_web
+dep_qlglicko_core = git@github.com:jlouis/qlglicko_core.git master
+dep_qlglicko_web  = git@github.com:jlouis/qlglicko_web.git master
+
+include erlang.mk
+
 ##### ----------------------------------------------------------------------
+
+publish:
+	cp rankings_*.pdf ladder_*.pdf.pdf ~/Dropbox/Public
 
 matchup:
 	echo "Player,Map,R,RD,Sigma" > players.csv
@@ -112,8 +121,6 @@ postgres_restore:
 	pg_restore -e -C -d postgres ./qlglicko.dump
 
 console:
-	_rel/bin/qlglicko console -pa ../deps/*/ebin
+	rel/qlglicko/bin/qlglicko console \
+		-pa ../../deps/*/ebin
 
-.PHONY: deploy
-deploy:
-	rsync -Parv ~/P/qlglicko /usr/jails/qlglicko/home/qlglicko/P

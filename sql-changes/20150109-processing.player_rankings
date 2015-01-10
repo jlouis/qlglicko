@@ -1,0 +1,16 @@
+CREATE TABLE processing.player_rankings (
+  	tournament INTEGER NOT NULL,
+  	player VARCHAR(32) NOT NULL,
+  	map VARCHAR(32) NOT NULL,
+  	rank	REAL,
+  	rd REAL,
+  	sigma REAL
+);
+
+CREATE INDEX player_rankings_trgm ON processing.player_rankings USING GIN (player gin_trgm_ops);
+CREATE INDEX player_rankings_lower ON processing.player_rankings (lower(player));
+
+CREATE OR REPLACE VIEW web.player_rankings AS
+  SELECT
+    tournament, player, map, rank, rd, sigma
+  FROM processing.player_rankings;
