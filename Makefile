@@ -4,7 +4,7 @@ PROJECT = qlglicko
 .PHONY: release clean-release push
 
 push:
-	rsync -ar rel/qlglicko myrddraal:P/qlglicko/rel
+	rsync -ar /home/jlouis/P/qlglicko /usr/jails/qlglicko/home/qlglicko/P
 
 ##### ----------------------------------------------------------------------
 
@@ -16,6 +16,6 @@ postgres_restore:
 	pg_restore -e -C -d postgres ./qlglicko.dump
 
 console:
-	_rel/qlglicko/bin/qlglicko console \
-		-pa ../../deps/*/ebin
+	_rel/bin/qlglicko console \
+		-pa ../deps/*/ebin
 
