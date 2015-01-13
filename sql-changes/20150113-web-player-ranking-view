@@ -1,0 +1,9 @@
+BEGIN;
+
+CREATE VIEW web.player_rankings AS
+  SELECT DATE(t.t_to), pr.player, pr.map, pr.rank, pr.rd, pr.sigma
+  FROM processing.player_rankings pr JOIN tournament t ON (t.id = pr.tournament);
+  
+GRANT SELECT ON web.player_rankings TO qlglicko_web;
+
+COMMIT;
